@@ -1,15 +1,14 @@
 const UserScore=require("../model/userScores")
 
 exports.addScoreToUser=(req,res)=>{
-    var reqName=req.params.name;
-    UserScore.find({$and:[{name:reqName},{date:req.body.date}]}).exec((err,data)=>{
+    UserScore.find({$and:[{name:req.body.name},{date:req.body.date}]}).exec((err,data)=>{
         if(err){
             console.log("err",err);
             return res.json("Error in finding user");
         }
         if(data.length==0){
         const score=new UserScore({
-        name:req.params.name,
+        name:req.body.name,
         score:req.body.score,
         date:req.body.date
         })
@@ -22,7 +21,7 @@ exports.addScoreToUser=(req,res)=>{
     })
         }
         if(data.length>0){
-            UserScore.findOneAndUpdate({name:req.params.name},{$inc:{'score':req.body.score}}).then(()=>{
+            UserScore.findOneAndUpdate({$and:[{name:req.body.name},{date:req.body.date}]},{$inc:{'score':req.body.score}}).then(()=>{
                 return res.json("Data got updated..!")
             }).catch((err)=>{
                 console.log(err);
